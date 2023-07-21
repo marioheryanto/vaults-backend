@@ -17,6 +17,7 @@ type UserControllerInterface interface {
 	SignUp(c *gin.Context)
 	Login(c *gin.Context)
 	Home(c *gin.Context)
+	GoogleCallback(c *gin.Context)
 }
 
 func NewUserController(lib libraries.UserLibraryInterface) UserControllerInterface {

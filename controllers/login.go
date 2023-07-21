@@ -41,7 +41,7 @@ func GoogleOAuth(c *gin.Context) {
 	http.Redirect(c.Writer, c.Request, url, http.StatusTemporaryRedirect)
 }
 
-func GoogleCallback(c *gin.Context) {
+func (ctrl *UserController) GoogleCallback(c *gin.Context) {
 	googleResp, err := getUserInfo(c.Request.FormValue("state"), c.Request.FormValue("code"))
 	if err != nil {
 		fmt.Println(err.Error())
@@ -56,6 +56,8 @@ func GoogleCallback(c *gin.Context) {
 		return
 	}
 
+	ctrl.lib.SignUp(models.SignUp{Name: googleResp.Email, Email: googleResp.Email})
+
 	// response := models.Response{
 	// 	Message: "success login",
 	// 	Data: struct {
@@ -67,8 +69,9 @@ func GoogleCallback(c *gin.Context) {
 
 	// c.JSON(http.StatusOK, response)
 
-	http.Redirect(c.Writer, c.Request, fmt.Sprintf("/?jwt=%v", string(jwt)), http.StatusTemporaryRedirect)
+	utils.SendEmail()
 
+	http.Redirect(c.Writer, c.Request, fmt.Sprintf("/?jwt=%v", string(jwt)), http.StatusTemporaryRedirect)
 }
 
 func getUserInfo(state string, code string) (models.GoogleOAuthResponse, error) {
